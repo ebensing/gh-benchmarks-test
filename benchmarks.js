@@ -9,5 +9,11 @@ var output = {
     value : getrandom(100)
   }
 };
-
-console.log(JSON.stringify(output));
+if (process.env.PULL_REQUEST) {
+  var out = "";
+  out += "value 1: " + output.value1.toString() +"\n";
+  out += "nested.value" + output.nested.value.toString();
+  console.log(out);
+} else {
+  console.log(JSON.stringify(output));
+}
