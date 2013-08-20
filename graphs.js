@@ -12,6 +12,7 @@ $("document").ready(function () {
       var chartData = data[i];
       var container = "div.hero-unit";
 
+      $("<a></a>").attr("name", i.toString()).appendTo(container);
       $("<div></div>").addClass("gContainer").attr("id", "div"+i).appendTo(container);
       var selector = "#div%id%".replace("%id%",i.toString());
       switch(chartDesc.type) {
@@ -139,10 +140,6 @@ function buildMultiBarGraph(selector, chartDesc, chartData) {
   var y = d3.scale.linear().range([height, 0]);
 
   var color = d3.scale.category20();
-    /*
-     *.range(["#98abc5", "#8a89a6", "#7b6888",
-     *  "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-     */
 
   var xAxis = d3.svg.axis().scale(x0).orient("bottom");
   var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(d3.format(".2s"));
@@ -189,6 +186,17 @@ function buildMultiBarGraph(selector, chartDesc, chartData) {
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height +")")
     .call(xAxis);
+
+  // this is the thing we have to do to add links to commit names
+  graph.selectAll("g.x.axis g text").each(function (d, i) {
+    var g = d3.select(this);
+    g.attr("fill", "blue");
+    var text = g.text().split('|');
+    g.text('');
+    g.append("a")
+      .attr("xlink:href", text[1])
+      .text(text[0]);
+  });
 
   // add the y-axis
   graph.append("g")
@@ -239,6 +247,15 @@ function buildMultiBarGraph(selector, chartDesc, chartData) {
     .attr("dy", ".35em")
     .style("text-anchor", "end")
     .text(function(d) { return d; });
+
+  // add the axis label
+  graph.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text(chartDesc.units);
 
 }
 
@@ -296,6 +313,17 @@ function buildLineGraph(selector, chartDesc, chartData) {
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(xAxis);
+
+  // this is the thing we have to do to add links to commit names
+  graph.selectAll("g.x.axis g text").each(function (d, i) {
+    var g = d3.select(this);
+    g.attr("fill", "blue");
+    var text = g.text().split('|');
+    g.text('');
+    g.append("a")
+      .attr("xlink:href", text[1])
+      .text(text[0]);
+  });
 
   var yAxis = d3.svg.axis()
     .scale(y)
@@ -356,5 +384,13 @@ function buildLineGraph(selector, chartDesc, chartData) {
     .style("text-anchor", "start")
     .text(function(d) { return d; });
 
+  // add the axis label
+  graph.append("text")
+    .attr("class", "y label")
+    .attr("text-anchor", "end")
+    .attr("y", 6)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text(chartDesc.units);
 
 }
